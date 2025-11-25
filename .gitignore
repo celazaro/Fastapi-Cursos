@@ -1,0 +1,58 @@
+# --- Archivos de Python ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.egg-info/
+*.egg
+
+# --- Entornos virtuales ---
+venv/
+env/
+.venv/
+
+# --- Archivos de dependencias ---
+*.log
+*.pot
+*.pyc
+
+# --- Configuración de IDEs ---
+.vscode/
+.idea/
+
+# --- Archivos de pruebas ---
+.coverage
+htmlcov/
+.tox/
+.pytest_cache/
+
+# --- Archivos de compilación ---
+build/
+dist/
+
+# --- Archivos de Docker ---
+*.pid
+*.seed
+*.pid.lock
+
+# --- Configuración de FastAPI/Uvicorn ---
+# Si usas SQLite para pruebas locales
+*.db
+*.sqlite3
+
+# --- Archivos de entorno ---
+.env
+.env.*
+
+# --- Archivos de cache ---
+.cache/
+.mypy_cache/
+.dmypy.json
+.pyre/
+
+# --- Otros ---
+*.swp
+*.swo
+
+media/
