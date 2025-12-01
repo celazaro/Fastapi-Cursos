@@ -1,5 +1,8 @@
 # app/config.py
 
+import cloudinary
+import os
+
 from pydantic import PostgresDsn,  Field, AnyUrl # Importa SecretStr para la clave sensible
 from pydantic_settings import BaseSettings # type: ignore
 
@@ -27,10 +30,23 @@ class Settings(BaseSettings):
     
     URL_BASE_SERVIDOR: str
     
+    # Campos para Cloudinary
+    CLOUDINARY_CLOUD_NAME: str
+    CLOUDINARY_API_KEY: str
+    CLOUDINARY_API_SECRET: str
+    
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
 
+
 # Crea la instancia única de la configuración
-settings = Settings() 
+settings = Settings()       
+        
+# Inicializar Cloudinary con settings
+cloudinary.config(
+    cloud_name=settings.CLOUDINARY_CLOUD_NAME,
+    api_key=settings.CLOUDINARY_API_KEY,
+    api_secret=settings.CLOUDINARY_API_SECRET
+)
 
