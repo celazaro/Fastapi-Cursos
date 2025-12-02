@@ -10,11 +10,11 @@ from app.auth.auth import require_admin
 
 router = APIRouter(prefix="/categorias", tags=["categorias"])
 
-from app.config import settings
+#from app.config import settings
 
-CLOUDINARY_CLOUD_NAME=settings.CLOUDINARY_CLOUD_NAME
-CLOUDINARY_API_KEY=settings.CLOUDINARY_API_KEY
-CLOUDINARY_API_SECRET=settings.CLOUDINARY_API_SECRET
+#CLOUDINARY_CLOUD_NAME=settings.CLOUDINARY_CLOUD_NAME
+#CLOUDINARY_API_KEY=settings.CLOUDINARY_API_KEY
+#CLOUDINARY_API_SECRET=settings.CLOUDINARY_API_SECRET
 
 @router.post("/")
 async def create_categoria(
