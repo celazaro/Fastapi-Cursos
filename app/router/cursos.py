@@ -9,8 +9,6 @@ from app.models.cursos_categorias import CursoCategoria  # Importar el modelo Cu
 
 from app.utils.image_curso import save_image_curso, delete_image_curso
 
-from pathlib import Path
-
 from enum import Enum
 
 from app.auth.auth import require_admin

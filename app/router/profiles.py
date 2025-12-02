@@ -48,7 +48,7 @@ async def create_profile(
         nombre=nombre,
         apellido=apellido,
         imagen_url=imagen_url,
-        imagen_id=imagen_id
+        imagen_id=imagen_id,
         direccion=direccion,
         departamento=departamento,
         provincia=provincia,
