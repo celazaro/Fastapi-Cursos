@@ -1,12 +1,7 @@
 # Utilidades para manejar imágenes en el sistema de archivos
-# en este caso debe instalarse Pillow: pip install Pillow
+# en este caso debe instalarse Cloudinary: pip install cloudinary
 
-import os
 from fastapi import UploadFile # type: ignore
-from PIL import Image
-from pathlib import Path
-import shutil
-import uuid
 
 import cloudinary.uploader
 

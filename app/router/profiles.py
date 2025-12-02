@@ -4,7 +4,7 @@ from app.models.profiles import Profile
 from app.models.users import User
 from app.auth.auth import get_current_user, get_session
 from app.utils.image_handler import save_image, delete_image
-from pathlib import Path
+
 
 router = APIRouter()
 
@@ -29,17 +29,26 @@ async def create_profile(
         raise HTTPException(status_code=400, detail="Ya tienes un perfil")
 
     imagen_url = None
-    if imagen:
+    imagen_id = None
+    
+    if imagen and imagen.filename:
         try:
-            ruta_relativa = await save_image(imagen)
-            imagen_url = f"{request.base_url}media/perfiles/{Path(ruta_relativa).name}"
+            result = await save_image(imagen)
+            imagen_url = result.get("secure_url")
+            imagen_id = result.get("public_id")
+            if not imagen_url or not imagen_id:
+                raise HTTPException(status_code=500, detail="Respuesta inesperada de Cloudinary")
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Error al guardar imagen: {e}")
+    else:
+        imagen_url = None
+        imagen_id = None
 
     profile = Profile(
         nombre=nombre,
         apellido=apellido,
-        imagen_url=ruta_relativa if imagen else None,  # Guardar solo ruta relativa
+        imagen_url=imagen_url,
+        imagen_id=imagen_id
         direccion=direccion,
         departamento=departamento,
         provincia=provincia,
@@ -128,8 +137,9 @@ async def update_profile(
             if profile.imagen_url:
                 delete_image(profile.imagen_url)
             # Guardar la nueva imagen
-            imagen_path = await save_image(imagen)
-            profile.imagen_url = imagen_path
+            result = await save_image(imagen)
+            profile.imagen_url = result["secure_url"]
+            profile.imagen_id = result["public_id"]
         except ValueError as e:
             raise HTTPException(status_code=400, detail=str(e))
 

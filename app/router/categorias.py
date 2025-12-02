@@ -1,20 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException, File, Form, UploadFile, Request, status
+from fastapi import APIRouter, Depends, HTTPException, File, Form, UploadFile
 from sqlmodel import Session, select
 from app.db.database import get_session
-from typing import List
 from app.models.categorias import Categoria
-from app.models.users import User
 
 from app.utils.image_categoria import save_image_categoria, delete_image_categoria
 from app.auth.auth import require_admin
 
 router = APIRouter(prefix="/categorias", tags=["categorias"])
 
-#from app.config import settings
-
-#CLOUDINARY_CLOUD_NAME=settings.CLOUDINARY_CLOUD_NAME
-#CLOUDINARY_API_KEY=settings.CLOUDINARY_API_KEY
-#CLOUDINARY_API_SECRET=settings.CLOUDINARY_API_SECRET
 
 @router.post("/")
 async def create_categoria(

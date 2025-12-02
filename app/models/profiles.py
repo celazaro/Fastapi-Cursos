@@ -13,7 +13,9 @@ class ProfileBase(SQLModel):
     bio: Optional[str] = Field(default=None)
     is_active: bool = Field(default=True)
 
-
+    # Identificador interno (public_id) en Cloudinary
+    imagen_id: Optional[str] = None
+    
 class Profile(ProfileBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     user_id: int = Field(default=None, foreign_key="user.id")

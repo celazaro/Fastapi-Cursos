@@ -54,14 +54,21 @@ async def create_curso(
         categorias.append(categoria)
     
     imagen_url = None
+    imagen_id = None
     ruta_relativa = None
     
-    if imagen:
+    if imagen and imagen.filename:
         try:
-            ruta_relativa = await save_image_curso(imagen)
-            imagen_url = f"media/cursos/{Path(ruta_relativa).name}"
+            result = await save_image_curso(imagen)
+            imagen_url = result.get("secure_url")
+            imagen_id = result.get("public_id")
+            if not imagen_url or not imagen_id:
+                raise HTTPException(status_code=500, detail="Respuesta inesperada de Cloudinary")
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Error al guardar imagen: {e}")
+    else:
+        imagen_url = None
+        imagen_id = None
 
     curso = Curso(
         titulo=titulo,
@@ -71,7 +78,8 @@ async def create_curso(
         nivel=nivel,
         destacado=destacado,
         profesor_id=profesor_id,
-        imagen_url=imagen_url, 
+        imagen_url=imagen_url,
+        imagen_id=imagen_id 
     )
     
     session.add(curso)
@@ -104,6 +112,7 @@ async def create_curso(
         nivel=nivel_out,
         destacado=curso.destacado,
         imagen_url=imagen_out,
+        imagen_id=imagen_id,
         profesor=profesor_out,
         categorias=categorias_out
     )
@@ -323,11 +332,12 @@ async def actualizar_curso(
     if imagen and imagen.filename:
         try:
             # Eliminar la imagen anterior si existe
-            if curso.imagen_url:
-                delete_image_curso(curso.imagen_url)
+            if curso.imagen_id:
+                delete_image_curso(curso.imagen_id)
             # Guardar la nueva imagen
-            ruta_relativa = await save_image_curso(imagen)
-            curso.imagen_url = f"media/cursos/{Path(ruta_relativa).name}"
+            result = await save_image_curso(imagen)
+            curso.imagen_url = result["secure_url"]
+            curso.imagen_id = result["public_id"]
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Error al guardar imagen: {e}")
 
@@ -401,7 +411,7 @@ def eliminar_curso(
     
     # Eliminar la imagen anterior si existe
     if curso.imagen_url:
-        delete_image_curso(curso.imagen_url)
+        delete_image_curso(curso.imagen_id)
         
     session.delete(curso)
     session.commit()

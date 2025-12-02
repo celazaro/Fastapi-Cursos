@@ -18,7 +18,9 @@ class Curso(SQLModel, table=True):
     destacado: bool = Field(default=False, nullable=False)  # Indica si el curso es destacado
     
     profesor_id: int = Field(foreign_key="profesor.id")  # Clave foránea a Profesor
-    
+
+    # Identificador interno (public_id) en Cloudinary
+    imagen_id: Optional[str] = None
     
      # Relación  con Profesores y Categorías
     profesor: Optional["Profesor"] = Relationship(back_populates="curso")

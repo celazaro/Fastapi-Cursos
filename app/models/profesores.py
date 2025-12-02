@@ -11,6 +11,9 @@ class Profesor(SQLModel, table=True):
     profesion: str = Field(max_length=100, nullable=False)
     imagen_url: Optional[str] = Field(default=None, nullable=True)  # URL de la imagen del profesor
 
+    # Identificador interno (public_id) en Cloudinary
+    imagen_id: Optional[str] = None
+    
     # Relación con Curso 
     curso: List["Curso"] = Relationship(back_populates="profesor"
 )

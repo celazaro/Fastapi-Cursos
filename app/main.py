@@ -7,9 +7,6 @@ from app.payments.routes import router as mp_router
 
 from fastapi.middleware.cors import CORSMiddleware
 
-from fastapi.staticfiles import StaticFiles
-import os
-
 from .config import settings
 
 app = FastAPI()
@@ -17,7 +14,7 @@ app = FastAPI()
 # Lista de orígenes permitidos
 origins = [
     "http://localhost:5173",  # tu frontend en desarrollo
-    "https://tu-dominio-frontend.com",  # si luego lo despliegas
+    #"https://tu-dominio-frontend.com",  # si luego lo despliegas
 ]
 
 # Configurar CORS si es necesario
@@ -36,14 +33,6 @@ def on_startup():
 @app.get("/") 
 async def root():
     return {"message": settings.APP_NAME,}  
-
-# Obtener ruta absoluta a la carpeta 'media'
-ruta_media = os.path.join(os.path.dirname(os.path.dirname(__file__)), "media")
-
-# Montar la carpeta 'media' en la ruta '/media', esto es útil para servir archivos estáticos como imágenes de perfil desde el sistema de archivos a través de la API
-
-app.mount("/media", StaticFiles(directory=ruta_media), name="media")
-
 
 # Include the router from the users module
 

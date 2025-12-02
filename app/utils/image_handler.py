@@ -1,49 +1,31 @@
 # Utilidades para manejar imágenes en el sistema de archivos
-# en este caso debe instalarse Pillow: pip install Pillow
+# en este caso debe instalarse Cloudinary: pip install cloudinary
 
-import os
 from fastapi import UploadFile # type: ignore
-from PIL import Image
-from pathlib import Path
-import shutil
-import uuid
 
-
-# Crear directorio media si no existe
-
-MEDIA_DIR = Path("media/perfiles")
-MEDIA_DIR.mkdir(parents=True, exist_ok=True)
+import cloudinary.uploader
 
 
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
 
 
-async def save_image(file: UploadFile) -> str:
-    extension = Path(file.filename).suffix.lower()
-
-    if extension not in ALLOWED_EXTENSIONS:
+async def save_image(file: UploadFile):
+    extension = file.filename.split(".")[-1].lower()
+    if f".{extension}" not in ALLOWED_EXTENSIONS:
         raise ValueError("Tipo de archivo no permitido")
 
-    filename = f"{uuid.uuid4()}{extension}"
-    filepath = MEDIA_DIR / filename
-
-    with filepath.open("wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
-        
-    # Optimizar la imagen
-    with Image.open(filepath) as img:
-        # Mantener una calidad razonable pero optimizada
-        img.save(filepath, optimize=True, quality=85)
-
-    return f"media/perfiles/{filename}"  # Ruta relativa para guardar en DB
+    result = cloudinary.uploader.upload(
+        file.file,
+        folder="usuarios",
+        resource_type="image"
+    )
+    return result  # dict con secure_url y public_id
 
 
-def delete_image(image_url: str):
-    if image_url:
-        # Esto debe funcionar si imagen_url es algo como "media/perfiles/archivo.jpg"
-        path = Path(image_url)
-        if path.exists() and path.is_file():
-            path.unlink()
-            print("✅ Imagen eliminada:", path)
-        else:
-            print("⚠ Archivo no encontrado en:", path)
+def delete_image(public_id: str):
+    """
+    Borra una imagen de Cloudinary usando su public_id.
+    Ejemplo de public_id: 'usuarios/uuid.jpg'
+    """
+    result = cloudinary.uploader.destroy(public_id, resource_type="image")
+    return result

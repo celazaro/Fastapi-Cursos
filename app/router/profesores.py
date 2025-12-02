@@ -1,13 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, File, Form, UploadFile, Request
 from sqlmodel import Session, select
 from app.db.database import get_session
-from typing import List  # Import List from typing
 from app.models.profesores import Profesor  # Importar el modelo correspondiente
-from app.models.cursos import Curso  # Importar el modelo Curso
-from pathlib import Path
 
 from app.utils.image_profesor import save_image_profesor, delete_image_profesor
-
 from app.auth.auth import require_admin
 
 router = APIRouter( prefix="/profesores", tags=["profesores"])
@@ -22,18 +18,29 @@ async def create_profesor(
     user = Depends(require_admin)
     ):
     
+    imagen_url = None
+    imagen_id = None
     
-    if imagen:
+    if imagen and imagen.filename:
         try:
-            ruta_relativa = await save_image_profesor(imagen)
-            imagen_url = f"{request.base_url}media/profesores/{Path(ruta_relativa).name}"
+            result = await save_image_profesor(imagen)
+            imagen_url = result.get("secure_url")
+            imagen_id = result.get("public_id")
+        
+            if not imagen_url or not imagen_id:
+                raise HTTPException(status_code=500, detail="Respuesta inesperada de Cloudinary")
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Error al guardar imagen: {e}")
+        
+    else:
+        imagen_url = None
+        imagen_id = None
     
     profesor = Profesor(
         name=nombre,
         profesion=profesion,
-        imagen_url=ruta_relativa if imagen else None  # Guardar la URL de la imagen
+        imagen_url=imagen_url,
+        imagen_id=imagen_id
     )
     
     
@@ -80,11 +87,12 @@ async def update_profesor(
     if imagen and imagen.filename:
         try:
             # Eliminar la imagen anterior si existe
-            if profesor.imagen_url:
-                delete_image_profesor(profesor.imagen_url)
+            if profesor.imagen_id:
+                delete_image_profesor(profesor.imagen_id)
             # Guardar la nueva imagen
-            imagen_path = await save_image_profesor(imagen)
-            profesor.imagen_url = imagen_path
+            result = await save_image_profesor(imagen)
+            profesor.imagen_url = result["secure_url"]
+            profesor.imagen_id = result["public_id"]
         except ValueError as e:
             raise HTTPException(status_code=400, detail=str(e))
 
@@ -116,8 +124,8 @@ def delete_profesor(
         raise HTTPException(status_code=404, detail="Profesor no encontrado")
     
         # Eliminar la imagen anterior si existe
-    if profesor.imagen_url:
-        delete_image_profesor(profesor.imagen_url)
+    if profesor.imagen_id:
+        delete_image_profesor(profesor.imagen_id)
         
     session.delete(profesor)
     session.commit()

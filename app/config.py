@@ -1,7 +1,6 @@
 # app/config.py
 
 import cloudinary
-import os
 
 from pydantic import PostgresDsn,  Field, AnyUrl # Importa SecretStr para la clave sensible
 from pydantic_settings import BaseSettings # type: ignore
