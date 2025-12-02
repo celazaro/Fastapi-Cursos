@@ -14,10 +14,16 @@ from .config import settings
 
 app = FastAPI()
 
+# Lista de orígenes permitidos
+origins = [
+    "http://localhost:5173",  # tu frontend en desarrollo
+    "https://tu-dominio-frontend.com",  # si luego lo despliegas
+]
+
 # Configurar CORS si es necesario
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
