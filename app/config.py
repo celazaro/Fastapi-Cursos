@@ -37,6 +37,11 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
+    
+    cors_origins: str  # se leerá como texto desde la variable de entorno
+
+    class Config:
+        env_file = ".env"  # opcional, para desarrollo local
 
 
 # Crea la instancia única de la configuración

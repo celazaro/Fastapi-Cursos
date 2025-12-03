@@ -12,10 +12,8 @@ from .config import settings
 app = FastAPI()
 
 # Lista de orígenes permitidos
-origins = [
-    "http://localhost:5173",  # tu frontend en desarrollo
-    #"https://tu-dominio-frontend.com",  # si luego lo despliegas
-]
+# Convertir la cadena en lista
+origins = settings.cors_origins.split(",")
 
 # Configurar CORS si es necesario
 app.add_middleware(
