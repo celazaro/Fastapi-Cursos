@@ -71,9 +71,9 @@ def create_preference(data: PaymentRequest):
 
         # "back_urls": A dónde redirigir al usuario después del pago
         "back_urls": {
-            "success": f"{URL_BASE}/mp/success",
-            "failure": f"{URL_BASE}/mp/failure",
-            "pending": f"{URL_BASE}/mp/pending",
+            "success": f"{URL_BASE}/success",
+            "failure": f"{URL_BASE}/failure",
+            "pending": f"{URL_BASE}/pending",
         },
 
         # "auto_return": Para que vuelva automáticamente a tu sitio al terminar
