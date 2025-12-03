@@ -29,6 +29,7 @@ router = APIRouter(prefix="/mp", tags=["Mercado Pago"])
 
 ACCESS_TOKEN = settings.MERCADO_PAGO_ACCESS_TOKEN
 URL_BASE = settings.URL_BASE_SERVIDOR
+URL_FRONT = settings.URL_FRONTEND
 
 sdk = mercadopago.SDK(ACCESS_TOKEN)
 
@@ -71,9 +72,9 @@ def create_preference(data: PaymentRequest):
 
         # "back_urls": A dónde redirigir al usuario después del pago
         "back_urls": {
-            "success": f"{URL_BASE}/success",
-            "failure": f"{URL_BASE}/failure",
-            "pending": f"{URL_BASE}/pending",
+            "success": f"{URL_BASE}/mp/success",
+            "failure": f"{URL_BASE}/mp/failure",
+            "pending": f"{URL_BASE}/mp/pending",
         },
 
         # "auto_return": Para que vuelva automáticamente a tu sitio al terminar
@@ -114,17 +115,17 @@ def create_preference(data: PaymentRequest):
 async def pago_exitoso(request: Request, session: Session = Depends(get_session)):
     # Capturamos datos y guardamos como 'approved'
     process_payment_return(request, session, status_override="approved")
-    return RedirectResponse(url=f"{URL_BASE}/success")
+    return RedirectResponse(url=f"{URL_FRONT}/success")
 
 @router.get("/failure")
 async def pago_fallido(request: Request, session: Session = Depends(get_session)):
     process_payment_return(request, session, status_override="rejected")
-    return RedirectResponse(url=f"{URL_BASE}/failure")
+    return RedirectResponse(url=f"{URL_FRONT}/failure")
 
 @router.get("/pending")
 async def pago_pendiente(request: Request, session: Session = Depends(get_session)):
     process_payment_return(request, session, status_override="pending")
-    return RedirectResponse(url=f"{URL_BASE}/pending")
+    return RedirectResponse(url=f"{URL_FRONT}/pending")
 
 
 @router.post("/checkout")

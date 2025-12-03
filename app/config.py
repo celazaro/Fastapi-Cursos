@@ -29,6 +29,8 @@ class Settings(BaseSettings):
     
     URL_BASE_SERVIDOR: str
     
+    URL_FRONTEND: str
+    
     # Campos para Cloudinary
     CLOUDINARY_CLOUD_NAME: str
     CLOUDINARY_API_KEY: str
