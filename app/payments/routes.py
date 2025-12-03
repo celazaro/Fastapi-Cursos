@@ -114,17 +114,17 @@ def create_preference(data: PaymentRequest):
 async def pago_exitoso(request: Request, session: Session = Depends(get_session)):
     # Capturamos datos y guardamos como 'approved'
     process_payment_return(request, session, status_override="approved")
-    return RedirectResponse(url="http://localhost:5173/success")
+    return RedirectResponse(url=f"{URL_BASE}/failure/success")
 
 @router.get("/failure")
 async def pago_fallido(request: Request, session: Session = Depends(get_session)):
     process_payment_return(request, session, status_override="rejected")
-    return RedirectResponse(url="http://localhost:5173/failure")
+    return RedirectResponse(url=f"{URL_BASE}/failure")
 
 @router.get("/pending")
 async def pago_pendiente(request: Request, session: Session = Depends(get_session)):
     process_payment_return(request, session, status_override="pending")
-    return RedirectResponse(url="http://localhost:5173/pending")
+    return RedirectResponse(url=f"{URL_BASE}/failure/pending")
 
 
 @router.post("/checkout")
